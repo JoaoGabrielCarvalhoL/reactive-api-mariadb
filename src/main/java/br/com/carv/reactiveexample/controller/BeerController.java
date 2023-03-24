@@ -3,8 +3,10 @@ package br.com.carv.reactiveexample.controller;
 import br.com.carv.reactiveexample.dto.request.BeerPostRequest;
 import br.com.carv.reactiveexample.dto.request.BeerPutRequest;
 import br.com.carv.reactiveexample.dto.response.BeerGenericResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,7 +23,7 @@ public interface BeerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<Void> save(@RequestBody BeerPostRequest beerPostRequest);
+    ResponseEntity<Void> save(@RequestBody @Validated BeerPostRequest beerPostRequest);
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)

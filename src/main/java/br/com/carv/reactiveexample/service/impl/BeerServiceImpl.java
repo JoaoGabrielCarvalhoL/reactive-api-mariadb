@@ -10,6 +10,7 @@ import br.com.carv.reactiveexample.repository.BeerRepository;
 import br.com.carv.reactiveexample.service.BeerService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,5 +72,28 @@ public class BeerServiceImpl implements BeerService {
         logger.info("Getting beers by upc: " + upc);
         List<Beer> beers = this.beerRepository.findByUpc(upc);
         return Flux.fromIterable(beers).map(BeerMapper::toBeerGenericResponse);
+    }
+
+    @Override
+    public Mono<BeerGenericResponse> saveBeerMono(Mono<BeerPostRequest> beerPostRequestMono) {
+        return beerPostRequestMono.map(BeerMapper::toBeer).flatMap(beerRepository::save)
+                .map(BeerMapper::toBeerGenericResponse);
+    }
+
+    @Override
+    public Mono<BeerGenericResponse> updateBeerMono(Mono<BeerPutRequest> beerPutRequestMono) {
+        return beerPutRequestMono.map(BeerMapper::toBeer).flatMap(beerRepository::save)
+                .map(BeerMapper::toBeerGenericResponse);
+    }
+
+    @Override
+    public Mono<Void> reactiveDelete(Long beerId) {
+        return beerRepository.findById(beerId)
+                .switchIfEmpty(Mono.error(new BeerNotFoundException("Beer Not Found")))
+                .map(beer -> {
+                    return beer.getId();
+                }).flatMap(foundId -> beerRepository.deleteById(foundId))
+                .onErrorResume(error -> error instanceof  BeerNotFoundException, e ->
+                        ServerResponse.notFound().build().then());
     }
 }

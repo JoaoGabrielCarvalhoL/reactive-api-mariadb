@@ -2,7 +2,7 @@ package br.com.carv.reactiveexample.dto.request;
 
 import java.math.BigDecimal;
 
-public class BeerPutRequest {
+public class BeerPutRequest extends BeerRequest {
 
     private Long id;
     private String beerName;

@@ -1,10 +1,14 @@
 package br.com.carv.reactiveexample.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.math.BigDecimal;
 
-public class BeerPostRequest {
+public class BeerPostRequest extends BeerRequest {
 
+    @NotBlank
     private String beerName;
+    @NotBlank
     private String upc;
     private Integer quantityOnHands;
     private BigDecimal unitPrice;
